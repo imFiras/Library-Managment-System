@@ -1,10 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class RecordsPanel extends LibraryPanel implements LibraryObserver {
     private BorrowRecordTableAdapter recordsAdapter = new BorrowRecordTableAdapter();
     private JTable borrowRecordsTable;
+    private RecordFilterStrategy currentFilter = new AllRecordsFilter();
+    private JLabel filterLabel = new JLabel();
 
     public RecordsPanel() {
         super(new BorderLayout());
@@ -17,17 +18,18 @@ public class RecordsPanel extends LibraryPanel implements LibraryObserver {
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
         JButton showAllButton = new JButton("Show All Records");
-        showAllButton.addActionListener(e -> showAllRecords());
+        showAllButton.addActionListener(e -> setFilter(new AllRecordsFilter()));
 
         JButton showActiveButton = new JButton("Show Active Records");
-        showActiveButton.addActionListener(e -> showActiveRecords());
+        showActiveButton.addActionListener(e -> setFilter(new ActiveRecordsFilter()));
 
         JButton showOverdueButton = new JButton("Show Overdue Records");
-        showOverdueButton.addActionListener(e -> showOverdueRecords());
+        showOverdueButton.addActionListener(e -> setFilter(new OverdueRecordsFilter()));
 
         buttonPanel.add(showAllButton);
         buttonPanel.add(showActiveButton);
         buttonPanel.add(showOverdueButton);
+        buttonPanel.add(filterLabel);
 
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -37,22 +39,12 @@ public class RecordsPanel extends LibraryPanel implements LibraryObserver {
 
     @Override
     public void onLibraryChanged() {
-        showAllRecords();
+        recordsAdapter.setRecords(libraryManager.getBorrowRecords(currentFilter));
+        filterLabel.setText("Showing: " + currentFilter.getName());
     }
 
-    private void showAllRecords() {
-        updateBorrowRecordsTable(libraryManager.getAllBorrowRecords());
-    }
-
-    private void showActiveRecords() {
-        updateBorrowRecordsTable(libraryManager.getActiveBorrowRecords());
-    }
-
-    private void showOverdueRecords() {
-        updateBorrowRecordsTable(libraryManager.getOverdueRecords());
-    }
-
-    private void updateBorrowRecordsTable(List<BorrowRecord> records) {
-        recordsAdapter.setRecords(records);
+    private void setFilter(RecordFilterStrategy filter) {
+        currentFilter = filter;
+        onLibraryChanged();
     }
 }

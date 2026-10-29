@@ -124,27 +124,13 @@ public class LibraryManager {
         return new ArrayList<>(books);
     }
 
-    public List<BorrowRecord> getAllBorrowRecords() {
-        return new ArrayList<>(borrowRecords);
-    }
-
-    public List<BorrowRecord> getActiveBorrowRecords() {
-        List<BorrowRecord> active = new ArrayList<>();
+    public List<BorrowRecord> getBorrowRecords(RecordFilterStrategy filter) {
+        List<BorrowRecord> result = new ArrayList<>();
         for (BorrowRecord record : borrowRecords) {
-            if (!record.isReturned()) {
-                active.add(record);
+            if (filter.matches(record)) {
+                result.add(record);
             }
         }
-        return active;
-    }
-
-    public List<BorrowRecord> getOverdueRecords() {
-        List<BorrowRecord> overdue = new ArrayList<>();
-        for (BorrowRecord record : borrowRecords) {
-            if (record.isOverdue()) {
-                overdue.add(record);
-            }
-        }
-        return overdue;
+        return result;
     }
 }

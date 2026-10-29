@@ -45,9 +45,9 @@ public class ReportsPanel extends LibraryPanel {
             report.append("BORROWING ACTIVITY REPORT\n");
             report.append("=========================\n\n");
 
-            List<BorrowRecord> records = libraryManager.getAllBorrowRecords();
-            List<BorrowRecord> active = libraryManager.getActiveBorrowRecords();
-            List<BorrowRecord> overdue = libraryManager.getOverdueRecords();
+            List<BorrowRecord> records = libraryManager.getBorrowRecords(new AllRecordsFilter());
+            List<BorrowRecord> active = libraryManager.getBorrowRecords(new ActiveRecordsFilter());
+            List<BorrowRecord> overdue = libraryManager.getBorrowRecords(new OverdueRecordsFilter());
 
             report.append(String.format("Total Borrowing Records: %d\n", records.size()));
             report.append(String.format("Active Borrows: %d\n", active.size()));
