@@ -36,17 +36,17 @@ To run this application, you need to have a Java Development Kit (JDK) installed
 ### Command Line
 
 ```bash
-# Compile the Java file
-javac LibraryManagementSystem.java
+# Compile all sources
+javac -d out src/*.java
 
 # Run the application
-java LibraryManagementSystem
+java -cp out LibraryManagementSystem
 ```
 
 ### IDE
 
-1.  Create a new Java project in your IDE.
-2.  Add the `LibraryManagementSystem.java` file to the project's source folder.
+1.  Open the project folder in IntelliJ IDEA, Eclipse or VS Code.
+2.  Mark `src/` as the source folder.
 3.  Run the `main` method in the `LibraryManagementSystem` class.
 
 -----
@@ -90,16 +90,42 @@ The application features a tabbed interface for different functionalities:
       * **Inventory Report:** Generates a detailed list of all books, their total copies, and available copies.
       * **Borrowing Report:** Provides statistics on total, active, and overdue borrowing records, along with a list of all overdue books.
 
+## 🧩 Design Patterns (CCSW 413 Course Project)
+
+This fork refactors the original single-file application by applying six GoF design patterns.
+
+| Stage | Category | Pattern | Classes |
+|---|---|---|---|
+| 1 | Creational | Singleton | `LibraryManager` |
+| 1 | Creational | Factory Method | `TabFactory`, `BooksTabFactory`, `BorrowReturnTabFactory`, `RecordsTabFactory`, `ReportsTabFactory`, `LibraryPanel` |
+| 2 | Structural | Facade | `CirculationFacade`, `InputValidator`, `MessageService` |
+| 2 | Structural | Adapter | `BookTableAdapter`, `BorrowRecordTableAdapter` |
+| 3 | Behavioral | Observer | `LibraryObserver`, `LibraryManager` (subject), `BooksPanel`, `RecordsPanel` |
+| 3 | Behavioral | Strategy | `RecordFilterStrategy`, `AllRecordsFilter`, `ActiveRecordsFilter`, `OverdueRecordsFilter` |
+
+Each stage is tagged in git (`stage1`, `stage2`, `stage3`); `stage0` is the original code split into one class per file.
+
 ## 📁 Project Structure
 
 ```bash
-├── LibraryManagementSystem.java # Main application file
-└── README.md                    # Project documentation
+src/
+├── LibraryManagementSystem.java   # Main window
+├── Book.java, BorrowRecord.java   # Model
+├── LibraryManager.java            # Singleton + Observer subject
+├── LibraryPanel.java              # Base class for all tabs
+├── *Panel.java                    # Books, Borrow/Return, Records, Reports tabs
+├── *TabFactory.java               # Factory Method
+├── CirculationFacade.java         # Facade (+ InputValidator, MessageService)
+├── *TableAdapter.java             # Adapter
+├── LibraryObserver.java           # Observer
+└── *RecordsFilter.java            # Strategy (+ RecordFilterStrategy)
 ```
 
 -----
 
 ## 👨‍💻 Author
+
+Original application:
 
   * **Ali Akbar Khan**
   * **Email**: aliakbarkhana79@gmail.com
