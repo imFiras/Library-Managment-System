@@ -17,7 +17,7 @@ public class LibraryManagementSystem extends JFrame {
     private JTable borrowRecordsTable;
 
     public LibraryManagementSystem() {
-        libraryManager = new LibraryManager();
+        libraryManager = LibraryManager.getInstance();
         initializeGUI();
         refreshTables();
     }

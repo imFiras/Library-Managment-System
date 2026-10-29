@@ -2,13 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryManager {
+    // Singleton: the one shared instance
+    private static LibraryManager instance;
+
     private List<Book> books;
     private List<BorrowRecord> borrowRecords;
 
-    public LibraryManager() {
+    private LibraryManager() {
         books = new ArrayList<>();
         borrowRecords = new ArrayList<>();
         initializeSampleData();
+    }
+
+    public static synchronized LibraryManager getInstance() {
+        if (instance == null) {
+            instance = new LibraryManager();
+        }
+        return instance;
     }
 
     private void initializeSampleData() {
