@@ -1,24 +1,15 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class BooksPanel extends LibraryPanel {
-    private DefaultTableModel booksTableModel;
+    private BookTableAdapter booksAdapter = new BookTableAdapter();
     private JTable booksTable;
 
     public BooksPanel(Runnable onDataChanged) {
         super(new BorderLayout(), onDataChanged);
 
-        String[] columnNames = {"ISBN", "Title", "Author", "Category", "Total Copies", "Available", "Date Added"};
-        booksTableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        booksTable = new JTable(booksTableModel);
+        booksTable = new JTable(booksAdapter);
         booksTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(booksTable);
@@ -143,9 +134,7 @@ public class BooksPanel extends LibraryPanel {
             return;
         }
 
-        String isbn = (String) booksTableModel.getValueAt(selectedRow, 0);
-        Book book = libraryManager.findBookByIsbn(isbn);
-        if (book == null) return;
+        Book book = booksAdapter.getBookAt(selectedRow);
 
         JDialog dialog = new JDialog(owner(), "Edit Book", true);
         dialog.setSize(400, 300);
@@ -231,8 +220,9 @@ public class BooksPanel extends LibraryPanel {
             return;
         }
 
-        String isbn = (String) booksTableModel.getValueAt(selectedRow, 0);
-        String title = (String) booksTableModel.getValueAt(selectedRow, 1);
+        Book book = booksAdapter.getBookAt(selectedRow);
+        String isbn = book.getIsbn();
+        String title = book.getTitle();
 
         int confirm = JOptionPane.showConfirmDialog(this,
             "Are you sure you want to delete '" + title + "'?",
@@ -256,20 +246,6 @@ public class BooksPanel extends LibraryPanel {
     }
 
     private void fillTable(List<Book> books) {
-        booksTableModel.setRowCount(0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        for (Book book : books) {
-            Object[] row = {
-                book.getIsbn(),
-                book.getTitle(),
-                book.getAuthor(),
-                book.getCategory(),
-                book.getTotalCopies(),
-                book.getAvailableCopies(),
-                book.getDateAdded().format(formatter)
-            };
-            booksTableModel.addRow(row);
-        }
+        booksAdapter.setBooks(books);
     }
 }

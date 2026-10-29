@@ -1,24 +1,15 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RecordsPanel extends LibraryPanel {
-    private DefaultTableModel borrowRecordsTableModel;
+    private BorrowRecordTableAdapter recordsAdapter = new BorrowRecordTableAdapter();
     private JTable borrowRecordsTable;
 
     public RecordsPanel(Runnable onDataChanged) {
         super(new BorderLayout(), onDataChanged);
 
-        String[] columnNames = {"ISBN", "Title", "Borrower", "Email", "Borrow Date", "Due Date", "Return Date", "Status"};
-        borrowRecordsTableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        borrowRecordsTable = new JTable(borrowRecordsTableModel);
+        borrowRecordsTable = new JTable(recordsAdapter);
 
         JScrollPane scrollPane = new JScrollPane(borrowRecordsTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -59,21 +50,6 @@ public class RecordsPanel extends LibraryPanel {
     }
 
     private void updateBorrowRecordsTable(List<BorrowRecord> records) {
-        borrowRecordsTableModel.setRowCount(0);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        for (BorrowRecord record : records) {
-            Object[] row = {
-                record.getIsbn(),
-                record.getTitle(),
-                record.getBorrowerName(),
-                record.getBorrowerEmail(),
-                record.getBorrowDate().format(formatter),
-                record.getDueDate().format(formatter),
-                record.getReturnDate() != null ? record.getReturnDate().format(formatter) : "",
-                record.isReturned() ? "Returned" : (record.isOverdue() ? "Overdue" : "Active")
-            };
-            borrowRecordsTableModel.addRow(row);
-        }
+        recordsAdapter.setRecords(records);
     }
 }
