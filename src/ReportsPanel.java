@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ReportsPanel extends LibraryPanel {
 
-    public ReportsPanel(Runnable onDataChanged) {
-        super(new GridBagLayout(), onDataChanged);
+    public ReportsPanel() {
+        super(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -71,10 +71,5 @@ public class ReportsPanel extends LibraryPanel {
         add(inventoryButton, gbc);
         gbc.gridx = 1;
         add(borrowingButton, gbc);
-    }
-
-    @Override
-    public void refresh() {
-        // reports are generated on demand
     }
 }

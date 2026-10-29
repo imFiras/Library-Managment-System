@@ -1,14 +1,10 @@
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LibraryManagementSystem extends JFrame {
     private JTabbedPane tabbedPane;
-    private List<LibraryPanel> panels = new ArrayList<>();
 
     public LibraryManagementSystem() {
         initializeGUI();
-        refreshTables();
     }
 
     private void initializeGUI() {
@@ -26,16 +22,10 @@ public class LibraryManagementSystem extends JFrame {
             new ReportsTabFactory()
         };
         for (TabFactory factory : factories) {
-            panels.add(factory.addTab(tabbedPane, this::refreshTables));
+            factory.addTab(tabbedPane);
         }
 
         add(tabbedPane);
-    }
-
-    private void refreshTables() {
-        for (LibraryPanel panel : panels) {
-            panel.refresh();
-        }
     }
 
     public static void main(String[] args) {

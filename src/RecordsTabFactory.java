@@ -1,8 +1,8 @@
 public class RecordsTabFactory extends TabFactory {
 
     @Override
-    protected LibraryPanel createPanel(Runnable onDataChanged) {
-        return new RecordsPanel(onDataChanged);
+    protected LibraryPanel createPanel() {
+        return new RecordsPanel();
     }
 
     @Override

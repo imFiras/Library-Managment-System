@@ -2,12 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class RecordsPanel extends LibraryPanel {
+public class RecordsPanel extends LibraryPanel implements LibraryObserver {
     private BorrowRecordTableAdapter recordsAdapter = new BorrowRecordTableAdapter();
     private JTable borrowRecordsTable;
 
-    public RecordsPanel(Runnable onDataChanged) {
-        super(new BorderLayout(), onDataChanged);
+    public RecordsPanel() {
+        super(new BorderLayout());
 
         borrowRecordsTable = new JTable(recordsAdapter);
 
@@ -30,10 +30,13 @@ public class RecordsPanel extends LibraryPanel {
         buttonPanel.add(showOverdueButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
+
+        libraryManager.addObserver(this);
+        onLibraryChanged();
     }
 
     @Override
-    public void refresh() {
+    public void onLibraryChanged() {
         showAllRecords();
     }
 

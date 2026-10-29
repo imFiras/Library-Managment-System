@@ -4,8 +4,8 @@ import java.awt.*;
 public class BorrowReturnPanel extends LibraryPanel {
     private final CirculationFacade circulation = new CirculationFacade(this);
 
-    public BorrowReturnPanel(Runnable onDataChanged) {
-        super(new GridBagLayout(), onDataChanged);
+    public BorrowReturnPanel() {
+        super(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -37,7 +37,6 @@ public class BorrowReturnPanel extends LibraryPanel {
                 borrowIsbnField.setText("");
                 borrowerNameField.setText("");
                 borrowerEmailField.setText("");
-                onDataChanged.run();
             }
         });
         borrowPanel.add(borrowButton, gbc);
@@ -63,7 +62,6 @@ public class BorrowReturnPanel extends LibraryPanel {
             if (circulation.returnBook(returnIsbnField.getText(), returnNameField.getText())) {
                 returnIsbnField.setText("");
                 returnNameField.setText("");
-                onDataChanged.run();
             }
         });
         returnPanel.add(returnButton, gbc);
@@ -72,10 +70,5 @@ public class BorrowReturnPanel extends LibraryPanel {
         add(borrowPanel, gbc);
         gbc.gridx = 0; gbc.gridy = 1;
         add(returnPanel, gbc);
-    }
-
-    @Override
-    public void refresh() {
-        // form only, nothing to reload
     }
 }

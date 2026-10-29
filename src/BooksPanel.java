@@ -2,12 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class BooksPanel extends LibraryPanel {
+public class BooksPanel extends LibraryPanel implements LibraryObserver {
     private BookTableAdapter booksAdapter = new BookTableAdapter();
     private JTable booksTable;
 
-    public BooksPanel(Runnable onDataChanged) {
-        super(new BorderLayout(), onDataChanged);
+    public BooksPanel() {
+        super(new BorderLayout());
 
         booksTable = new JTable(booksAdapter);
         booksTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -38,10 +38,13 @@ public class BooksPanel extends LibraryPanel {
         buttonPanel.add(searchButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
+
+        libraryManager.addObserver(this);
+        onLibraryChanged();
     }
 
     @Override
-    public void refresh() {
+    public void onLibraryChanged() {
         fillTable(libraryManager.getAllBooks());
     }
 
@@ -109,7 +112,6 @@ public class BooksPanel extends LibraryPanel {
             if (libraryManager.addBook(book)) {
                 JOptionPane.showMessageDialog(dialog, "Book added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 dialog.dispose();
-                onDataChanged.run();
             } else {
                 JOptionPane.showMessageDialog(dialog, "Book with this ISBN already exists.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -191,14 +193,10 @@ public class BooksPanel extends LibraryPanel {
                 return;
             }
 
-            book.setTitle(title);
-            book.setAuthor(author);
-            book.setCategory(category);
-            book.setTotalCopies(copies);
+            libraryManager.updateBook(book, title, author, category, copies);
 
             JOptionPane.showMessageDialog(dialog, "Book updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             dialog.dispose();
-            onDataChanged.run();
         });
 
         cancelButton.addActionListener(e -> dialog.dispose());
@@ -232,14 +230,13 @@ public class BooksPanel extends LibraryPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             if (libraryManager.removeBook(isbn)) {
                 JOptionPane.showMessageDialog(this, "Book deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                onDataChanged.run();
             }
         }
     }
 
     private void searchBooks(String query) {
         if (query.trim().isEmpty()) {
-            refresh();
+            onLibraryChanged();
             return;
         }
         fillTable(libraryManager.searchBooks(query));

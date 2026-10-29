@@ -4,12 +4,12 @@ import javax.swing.*;
 public abstract class TabFactory {
 
     // Factory method: each subclass decides which panel to create
-    protected abstract LibraryPanel createPanel(Runnable onDataChanged);
+    protected abstract LibraryPanel createPanel();
 
     protected abstract String getTitle();
 
-    public LibraryPanel addTab(JTabbedPane tabbedPane, Runnable onDataChanged) {
-        LibraryPanel panel = createPanel(onDataChanged);
+    public LibraryPanel addTab(JTabbedPane tabbedPane) {
+        LibraryPanel panel = createPanel();
         tabbedPane.addTab(getTitle(), panel);
         return panel;
     }

@@ -7,6 +7,7 @@ public class LibraryManager {
 
     private List<Book> books;
     private List<BorrowRecord> borrowRecords;
+    private List<LibraryObserver> observers = new ArrayList<>();
 
     private LibraryManager() {
         books = new ArrayList<>();
@@ -19,6 +20,20 @@ public class LibraryManager {
             instance = new LibraryManager();
         }
         return instance;
+    }
+
+    public void addObserver(LibraryObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(LibraryObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (LibraryObserver observer : observers) {
+            observer.onLibraryChanged();
+        }
     }
 
     private void initializeSampleData() {
@@ -36,11 +51,24 @@ public class LibraryManager {
             }
         }
         books.add(book);
+        notifyObservers();
         return true;
     }
 
+    public void updateBook(Book book, String title, String author, String category, int totalCopies) {
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setCategory(category);
+        book.setTotalCopies(totalCopies);
+        notifyObservers();
+    }
+
     public boolean removeBook(String isbn) {
-        return books.removeIf(book -> book.getIsbn().equals(isbn));
+        boolean removed = books.removeIf(book -> book.getIsbn().equals(isbn));
+        if (removed) {
+            notifyObservers();
+        }
+        return removed;
     }
 
     public Book findBookByIsbn(String isbn) {
@@ -69,6 +97,7 @@ public class LibraryManager {
         Book book = findBookByIsbn(isbn);
         if (book != null && book.borrowBook()) {
             borrowRecords.add(new BorrowRecord(isbn, book.getTitle(), borrowerName, borrowerEmail));
+            notifyObservers();
             return true;
         }
         return false;
@@ -84,6 +113,7 @@ public class LibraryManager {
                 if (book != null) {
                     book.returnBook();
                 }
+                notifyObservers();
                 return true;
             }
         }
