@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BorrowReturnPanel extends LibraryPanel {
+    private final CirculationFacade circulation = new CirculationFacade(this);
 
     public BorrowReturnPanel(Runnable onDataChanged) {
         super(new GridBagLayout(), onDataChanged);
@@ -32,23 +33,11 @@ public class BorrowReturnPanel extends LibraryPanel {
         gbc.gridx = 1; gbc.gridy = 3;
         JButton borrowButton = new JButton("Borrow Book");
         borrowButton.addActionListener(e -> {
-            String isbn = borrowIsbnField.getText().trim();
-            String name = borrowerNameField.getText().trim();
-            String email = borrowerEmailField.getText().trim();
-
-            if (isbn.isEmpty() || name.isEmpty() || email.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (libraryManager.borrowBook(isbn, name, email)) {
-                JOptionPane.showMessageDialog(this, "Book borrowed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (circulation.borrowBook(borrowIsbnField.getText(), borrowerNameField.getText(), borrowerEmailField.getText())) {
                 borrowIsbnField.setText("");
                 borrowerNameField.setText("");
                 borrowerEmailField.setText("");
                 onDataChanged.run();
-            } else {
-                JOptionPane.showMessageDialog(this, "Book not available or not found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         borrowPanel.add(borrowButton, gbc);
@@ -71,21 +60,10 @@ public class BorrowReturnPanel extends LibraryPanel {
         gbc.gridx = 1; gbc.gridy = 2;
         JButton returnButton = new JButton("Return Book");
         returnButton.addActionListener(e -> {
-            String isbn = returnIsbnField.getText().trim();
-            String name = returnNameField.getText().trim();
-
-            if (isbn.isEmpty() || name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please fill all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (libraryManager.returnBook(isbn, name)) {
-                JOptionPane.showMessageDialog(this, "Book returned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (circulation.returnBook(returnIsbnField.getText(), returnNameField.getText())) {
                 returnIsbnField.setText("");
                 returnNameField.setText("");
                 onDataChanged.run();
-            } else {
-                JOptionPane.showMessageDialog(this, "No matching borrow record found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         returnPanel.add(returnButton, gbc);
