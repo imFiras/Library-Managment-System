@@ -1,0 +1,103 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class BorrowReturnPanel extends LibraryPanel {
+
+    public BorrowReturnPanel(Runnable onDataChanged) {
+        super(new GridBagLayout(), onDataChanged);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JPanel borrowPanel = new JPanel(new GridBagLayout());
+        borrowPanel.setBorder(BorderFactory.createTitledBorder("Borrow Book"));
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        borrowPanel.add(new JLabel("ISBN:"), gbc);
+        gbc.gridx = 1;
+        JTextField borrowIsbnField = new JTextField(15);
+        borrowPanel.add(borrowIsbnField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        borrowPanel.add(new JLabel("Borrower Name:"), gbc);
+        gbc.gridx = 1;
+        JTextField borrowerNameField = new JTextField(15);
+        borrowPanel.add(borrowerNameField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        borrowPanel.add(new JLabel("Borrower Email:"), gbc);
+        gbc.gridx = 1;
+        JTextField borrowerEmailField = new JTextField(15);
+        borrowPanel.add(borrowerEmailField, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 3;
+        JButton borrowButton = new JButton("Borrow Book");
+        borrowButton.addActionListener(e -> {
+            String isbn = borrowIsbnField.getText().trim();
+            String name = borrowerNameField.getText().trim();
+            String email = borrowerEmailField.getText().trim();
+
+            if (isbn.isEmpty() || name.isEmpty() || email.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (libraryManager.borrowBook(isbn, name, email)) {
+                JOptionPane.showMessageDialog(this, "Book borrowed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                borrowIsbnField.setText("");
+                borrowerNameField.setText("");
+                borrowerEmailField.setText("");
+                onDataChanged.run();
+            } else {
+                JOptionPane.showMessageDialog(this, "Book not available or not found.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        borrowPanel.add(borrowButton, gbc);
+
+        JPanel returnPanel = new JPanel(new GridBagLayout());
+        returnPanel.setBorder(BorderFactory.createTitledBorder("Return Book"));
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        returnPanel.add(new JLabel("ISBN:"), gbc);
+        gbc.gridx = 1;
+        JTextField returnIsbnField = new JTextField(15);
+        returnPanel.add(returnIsbnField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        returnPanel.add(new JLabel("Borrower Name:"), gbc);
+        gbc.gridx = 1;
+        JTextField returnNameField = new JTextField(15);
+        returnPanel.add(returnNameField, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 2;
+        JButton returnButton = new JButton("Return Book");
+        returnButton.addActionListener(e -> {
+            String isbn = returnIsbnField.getText().trim();
+            String name = returnNameField.getText().trim();
+
+            if (isbn.isEmpty() || name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (libraryManager.returnBook(isbn, name)) {
+                JOptionPane.showMessageDialog(this, "Book returned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                returnIsbnField.setText("");
+                returnNameField.setText("");
+                onDataChanged.run();
+            } else {
+                JOptionPane.showMessageDialog(this, "No matching borrow record found.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        returnPanel.add(returnButton, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.NORTH;
+        add(borrowPanel, gbc);
+        gbc.gridx = 0; gbc.gridy = 1;
+        add(returnPanel, gbc);
+    }
+
+    @Override
+    public void refresh() {
+        // form only, nothing to reload
+    }
+}
