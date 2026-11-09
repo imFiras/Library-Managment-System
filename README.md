@@ -103,7 +103,7 @@ This fork refactors the original single-file application by applying six GoF des
 | 3 | Behavioral | Observer | `LibraryObserver`, `LibraryManager` (subject), `BooksPanel`, `RecordsPanel` |
 | 3 | Behavioral | Strategy | `RecordFilterStrategy`, `AllRecordsFilter`, `ActiveRecordsFilter`, `OverdueRecordsFilter` |
 
-Each stage is tagged in git (`stage1`, `stage2`, `stage3`); `stage0` is the original code split into one class per file.
+The code at the end of each stage is on its own branch (`stage1`, `stage2`, `stage3`); `stage0` is the original code split into one class per file.
 
 ## 📁 Project Structure
 
